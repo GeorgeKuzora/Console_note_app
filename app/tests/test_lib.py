@@ -25,11 +25,13 @@ class TestUserInputPrompt(unittest.TestCase):
 class TestNote(unittest.TestCase):
 
     def setUp(self):
-        test_datetime = datetime(2023, 1, 1, 1, 1)
-        test_note = Note()
-        test_note.note_id = test_datetime.strftime(test_note.NOTE_ID_FORMAT)
-        test_note.note_title = "test title"
-        test_note.note_body = "test body"
+        self.test_datetime = datetime(2023, 1, 1, 1, 1, 1, 1)
+        self.test_note = Note()
+        self.test_note.note_id = self.test_datetime.strftime(self.test_note.NOTE_ID_FORMAT)
+        self.test_note.note_creation_dt = self.test_datetime
+        self.test_note.note_last_modification_dt = self.test_datetime
+        self.test_note.note_title = "test title"
+        self.test_note.note_body = "test body"
 
     def testCreateNote(self):
         time_before_note_created = datetime.now()
@@ -46,3 +48,7 @@ class TestNote(unittest.TestCase):
                         >= time_before_note_created \
                         and user_test_note.note_last_modification_dt <= time_after_note_created)
         self.assertTrue(user_test_note.note_id == id_from_note_cd)
+
+    def testNoteIdFormat(self):
+        formated_note_id = self.test_note._noteIdFormat()
+        self.assertEqual(formated_note_id, self.test_note.note_id)
