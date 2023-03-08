@@ -33,9 +33,13 @@ class TestNote(unittest.TestCase):
         self.test_note.note_title = "test title"
         self.test_note.note_body = "test body"
 
+    def testNoteIdFormat(self):
+        formated_note_id = self.test_note._noteIdFormat()
+        self.assertEqual(formated_note_id, self.test_note.note_id)
+
     def testCreateNote(self):
         time_before_note_created = datetime.now()
-        user_test_note = Note.createNote()
+        user_test_note = Note.createNoteFacrory()
         # Please input "test title" and "test body" in prompts
         time_after_note_created = datetime.now()
         id_from_note_cd = user_test_note.note_creation_dt.strftime(
@@ -49,6 +53,6 @@ class TestNote(unittest.TestCase):
                         and user_test_note.note_last_modification_dt <= time_after_note_created)
         self.assertTrue(user_test_note.note_id == id_from_note_cd)
 
-    def testNoteIdFormat(self):
-        formated_note_id = self.test_note._noteIdFormat()
-        self.assertEqual(formated_note_id, self.test_note.note_id)
+    def testConvertToJson(self):
+        object_attr_json = self.test_note._convertToJson()
+        self.assertEqual(type(object_attr_json), type("string"))

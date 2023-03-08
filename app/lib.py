@@ -34,27 +34,33 @@ class Note():
         self.note_creation_dt = datetime.now()
         self.note_last_modification_dt = datetime.now()
         self.note_id = self._noteIdFormat()
-
-    @classmethod
-    def createNote(cls):
-        new_note = Note()
-        new_note.note_title = UserInputPrompt.getClearUserInput("Введите \
-                                                                заголовок заметки: ")
-        new_note.note_body = UserInputPrompt.getClearUserInput("Введите тело заметки: ")
-        return new_note
+        self.note_in_json = self._convertToDict()
 
     def _noteIdFormat(self):
         _note_id = self.note_creation_dt.strftime(self.NOTE_ID_FORMAT)
         return _note_id
 
-    def convertToDict(self):
+    @classmethod
+    def createNoteFacrory(cls):
+        new_note = Note()
+        new_note.note_title = UserInputPrompt.getClearUserInput("Введите заголовок заметки: ")
+        new_note.note_body = UserInputPrompt.getClearUserInput("Введите тело заметки: ")
+        new_note.note_in_json = new_note._convertToJson()
+        return new_note
+
+    def _convertToJson(self):
+       attr_dict = self._convertToDict()
+       attr_json = json.dumps(attr_dict)
+       return attr_json
+
+    def _convertToDict(self):
         note_as_dict = {}
-        note_as_dict.update({"title": self.note_title,
-                             "body": self.note_body,
-                             "id": self.note_id,
-                             "creation_dt": self._formatDateTimeToString(
+        note_as_dict.update({"note_title": self.note_title,
+                             "note_body": self.note_body,
+                             "note_id": self.note_id,
+                             "note_creation_dt": self._formatDateTimeToString(
                                                 self.note_creation_dt),
-                             "last_modification_dt": self._formatDateTimeToString(
+                             "note_last_modification_dt": self._formatDateTimeToString(
                                                 self.note_last_modification_dt)
                             })
         return note_as_dict
@@ -62,7 +68,3 @@ class Note():
     def _formatDateTimeToString(self, _note_date_time):
         _note_date_time_string = _note_date_time.strftime(self.NOTE_DT_FORMAT)
         return _note_date_time_string
-
-
-    def changeNote(self):
-        pass
