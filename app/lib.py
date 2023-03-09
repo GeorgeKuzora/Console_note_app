@@ -34,7 +34,7 @@ class Note():
         self.note_creation_dt = datetime.now()
         self.note_last_modification_dt = datetime.now()
         self.note_id = self._noteIdFormat()
-        self.note_in_json = self._convertToDict()
+        self.note_in_json = ""
 
     def _noteIdFormat(self):
         _note_id = self.note_creation_dt.strftime(self.NOTE_ID_FORMAT)
