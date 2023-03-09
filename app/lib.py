@@ -41,7 +41,7 @@ class Note():
         return _note_id
 
     @classmethod
-    def createNoteFacrory(cls):
+    def createNote(cls):
         new_note = Note()
         new_note.note_title = UserInputPrompt.getClearUserInput("Введите заголовок заметки: ")
         new_note.note_body = UserInputPrompt.getClearUserInput("Введите тело заметки: ")

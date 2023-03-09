@@ -39,7 +39,7 @@ class TestNote(unittest.TestCase):
 
     def testCreateNote(self):
         time_before_note_created = datetime.now()
-        user_test_note = Note.createNoteFacrory()
+        user_test_note = Note.createNote()
         # Please input "test title" and "test body" in prompts
         time_after_note_created = datetime.now()
         id_from_note_cd = user_test_note.note_creation_dt.strftime(
