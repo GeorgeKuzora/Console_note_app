@@ -23,3 +23,34 @@ class FileSystemHandler:
     def getFileName(cls, note_id):
         file_name = cls.STORAGE_DIR + "/" + note_id + cls.FILE_FORMAT
         return file_name
+
+
+class FileSystemReader(FileSystemHandler):
+    FILE_NOT_EXISTS_MESSAGE = "Note didn't exist"
+
+    def __init__(self, id):
+        self.file_id = id
+        self.file_name = ""
+
+    @classmethod
+    def getJsonById(cls, file_id):
+        file = cls.getFileFactory(file_id)
+        json_data = file.readFile()
+        return json_data
+
+    @classmethod
+    def getFileFactory(cls, file_id):
+        file_obj = cls(file_id)
+        file_obj.file_name = file_obj.getFileName(file_obj.file_id)
+        return file_obj
+
+    def readFile(self):
+        try:
+            return self.getFileContents()
+        except FileNotFoundError:
+            return self.FILE_NOT_EXISTS_MESSAGE
+
+    def getFileContents(self):
+        with open(self.file_name, "r") as file:
+            file_contents = file.read()
+        return file_contents
