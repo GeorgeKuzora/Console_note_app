@@ -1,20 +1,25 @@
 import os
 
 
-class FileSystemHandler():
+class FileSystemHandler:
+    STORAGE_DIR = "data"
+    FILE_FORMAT = ".json"
 
-    @staticmethod
-    def saveNote(file_system_stream):
-        file_name = FileSystemHandler.getFileName(file_system_stream[1])
+    def __init__(self):
+        pass
+
+    @classmethod
+    def saveNote(cls, write_data):
+        file_name = FileSystemHandler.getFileName(write_data[1])
         try:
-            os.mkdir("data")
+            os.mkdir(cls.STORAGE_DIR)
         except FileExistsError:
             pass
         finally:
-            with open(file_name, 'w', encoding="utf-8") as file:
-                file.write(file_system_stream[0])
+            with open(file_name, "w", encoding="utf-8") as file:
+                file.write(write_data[0])
 
-    @staticmethod
-    def getFileName(note_id):
-        file_name = "data/" + note_id+ ".json"
+    @classmethod
+    def getFileName(cls, note_id):
+        file_name = cls.STORAGE_DIR + "/" + note_id + cls.FILE_FORMAT
         return file_name
