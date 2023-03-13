@@ -18,6 +18,12 @@ class TestFileSystemHandler(unittest.TestCase):
             fileContents = file.read()
         self.assertEqual(fileContents, self.test_file_content)
 
+    def testCreateListNote(self):
+        file_list = FileSystemHandler.createListNote()
+        file_list_values = file_list.values()
+        self.assertEqual(type(file_list), type({"thisis": "dict"}))
+        self.assertTrue(len(file_list_values) != 0)
+
 
 class TestFileSystemReader(unittest.TestCase):
     def setUp(self):
