@@ -1,4 +1,5 @@
 import os
+import glob
 
 
 class FileSystemHandler:
@@ -23,6 +24,17 @@ class FileSystemHandler:
     def getFileName(cls, note_id):
         file_name = cls.STORAGE_DIR + "/" + note_id + cls.FILE_FORMAT
         return file_name
+
+    # Записывает в словарь файлы формата json из текущего каталога
+    @classmethod
+    def createListNote(cls):
+        list_note_dict = {}
+        i = 0
+        print(os.getcwd())
+        for file in glob.glob(os.getcwd() + "/**/*.json"):
+            list_note_dict.update({i: os.path.basename(file).split(".")[0]})
+            i += 1
+        return list_note_dict
 
 
 class FileSystemReader(FileSystemHandler):
