@@ -44,6 +44,7 @@ class Note():
              i += 1
         return list_note_dict
 
+    @classmethod
     def createNote(cls, input_stream):
         new_note = Note()
         new_note.note_title = input_stream[cls.NOTE_INPUT_STREAM_FORMAT[0]]
