@@ -35,7 +35,26 @@ class FileSystemHandler:
             list_note_dict.update({i: os.path.basename(file).split(".")[0]})
             i += 1
         return list_note_dict
+    
+    # Создает словарь из времени создания и имени файла, сортирует и записывает в новый список
+    @classmethod
+    def createListNoteWithDate(cls):
+        list_note = createListNote()
+        list_note_date = {}
+        for i in range(0, len(list_note)):
+            list_note_date.update({list_note[i]: os.path.getmtime(os.getcwd() + "\\" + list_note[i] + ".json")})
+       
+        sorted_values = sorted(list_note_date.values())
+        sort_list_note = {}
+        for i in sorted_values:
+            for k in list_note_date.keys():
+                if list_note_date[k] == i:
+                    sort_list_note[k] = list_note_date[k]
+                    break
 
+        return sort_list_note
+    
+   
 
 class FileSystemReader(FileSystemHandler):
     FILE_NOT_EXISTS_MESSAGE = "Note didn't exist"
