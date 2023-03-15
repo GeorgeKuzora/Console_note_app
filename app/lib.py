@@ -34,6 +34,21 @@ class Note:
         new_note.note_body = input_stream[cls.NOTE_INPUT_STREAM_FORMAT[1]]
         return new_note
 
+    @classmethod
+    def createNoteFromJson(cls, note_data):
+        note = Note()
+        # note_data = json.loads(json_stream)
+        for key in note_data:
+            setattr(note, key, note_data[key])
+        return note
+
+    def changeNote(self, input_stream):
+        if input_stream[self.NOTE_INPUT_STREAM_FORMAT[0]]:
+            self.note_title = input_stream[self.NOTE_INPUT_STREAM_FORMAT[0]]
+        if input_stream[self.NOTE_INPUT_STREAM_FORMAT[1]]:
+            self.note_body = input_stream[self.NOTE_INPUT_STREAM_FORMAT[1]]
+        self.note_last_modification_dt = datetime.now()
+
     def getFileSystemStream(self):
         return self._convertToJson(), self._noteIdFormat()
 
