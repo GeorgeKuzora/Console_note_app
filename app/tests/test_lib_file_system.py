@@ -1,5 +1,6 @@
 import unittest
 import os
+import json
 from lib_file_system import *
 from lib import *
 
@@ -7,7 +8,12 @@ from lib import *
 class TestFileSystemHandler(unittest.TestCase):
     def setUp(self):
         self.test_id = "20230101010101"
-        self.test_file_content = "test note"
+        self.test_file_content = """{"note_title": "test title",
+                                     "note_body": "test body",
+                                     "note_id": "20230313194644",
+                                     "note_creation_dt": "20230313194644353411",
+                                     "note_last_modification_dt": "20230313194644353430"}"""
+        self.test_dict = json.loads(self.test_file_content)
         self.file_name = "data/20230101010101.json"
         self.test_write_data = (self.test_file_content, self.test_id)
 
@@ -28,7 +34,12 @@ class TestFileSystemHandler(unittest.TestCase):
 class TestFileSystemReader(unittest.TestCase):
     def setUp(self):
         self.test_id = "20230101010102"
-        self.test_file_content = "test note"
+        self.test_file_content = """{"note_title": "test title",
+                                     "note_body": "test body",
+                                     "note_id": "20230313194644",
+                                     "note_creation_dt": "20230313194644353411",
+                                     "note_last_modification_dt": "20230313194644353430"}"""
+        self.test_dict = json.loads(self.test_file_content)
         self.test_file_name = "data/20230101010102.json"
         self.test_file_obj = FileSystemReader(self.test_id)
         self.test_file_obj.file_name = self.test_file_name
@@ -59,3 +70,7 @@ class TestFileSystemReader(unittest.TestCase):
     def testGetFileContents(self):
         file_data = self.test_file_obj.getFileContents()
         self.assertEqual(file_data, self.test_file_content)
+
+    def testGetJsonByNoteTitle(self):
+        file_data = FileSystemReader.getJsonByNoteTitle(self.test_dict["note_title"])
+        self.assertEqual(type(file_data), type("string"))

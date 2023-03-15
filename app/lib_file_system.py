@@ -85,3 +85,7 @@ class FileSystemReader(FileSystemHandler):
         with open(self.file_name, "r") as file:
             file_contents = file.read()
         return file_contents
+
+    @classmethod
+    def getJsonByNoteTitle(cls, note_title: str):
+        pass
