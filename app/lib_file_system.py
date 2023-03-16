@@ -1,5 +1,4 @@
 import os
-import glob
 from glob import glob
 
 
@@ -31,9 +30,8 @@ class FileSystemHandler:
     @classmethod
     def createListNote(cls):
         list_note_dict = {}
-        i = 0
-   
-        for file in glob.glob(os.getcwd() + "/**/*.json"):
+        i = 0   
+        for file in glob("*.json"):
             list_note_dict.update({i: os.path.basename(file).split(".")[0]})
             i += 1
         return list_note_dict
