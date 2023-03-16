@@ -1,5 +1,7 @@
 import os
 import glob
+from glob import glob
+
 
 
 class FileSystemHandler:
@@ -30,7 +32,7 @@ class FileSystemHandler:
     def createListNote(cls):
         list_note_dict = {}
         i = 0
-        print(os.getcwd())
+   
         for file in glob.glob(os.getcwd() + "/**/*.json"):
             list_note_dict.update({i: os.path.basename(file).split(".")[0]})
             i += 1
@@ -86,6 +88,14 @@ class FileSystemReader(FileSystemHandler):
             file_contents = file.read()
         return file_contents
 
+    # Получение json из файла на основе title заметки
     @classmethod
-    def getJsonByNoteTitle(cls, note_title: str):
-        pass
+    def getJsonByNoteTitle(cls, title: str):
+        for file in glob("*.json"):
+            json_data = file.getFileContents()
+            if json_data.find(title) != -1:
+                return  json_data                
+            else:
+                continue
+        return cls.FILE_NOT_EXISTS_MESSAGE
+ 
