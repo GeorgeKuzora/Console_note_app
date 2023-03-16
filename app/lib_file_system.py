@@ -99,7 +99,7 @@ class FileSystemReader(FileSystemHandler):
     @classmethod
     def getJsonByNoteTitle(cls, title: str):
         for file in glob("*.json"):
-            json_data = file.getFileContents()
+            json_data = cls.getFileContents(file)
             if json_data.find(title) != -1:
                 return  json_data                
             else:
