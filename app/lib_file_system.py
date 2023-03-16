@@ -22,6 +22,15 @@ class FileSystemHandler:
                 file.write(write_data[0])
 
     @classmethod
+    def delNote(cls, note_id):   
+        file_name = cls.getFileName(note_id)
+        if os.path.isfile(file_name):
+            os.remove(file_name)
+        else:
+            FileSystemReader.FILE_NOT_EXISTS_MESSAGE
+
+
+    @classmethod
     def getFileName(cls, note_id):
         file_name = cls.STORAGE_DIR + "/" + note_id + cls.FILE_FORMAT
         return file_name
