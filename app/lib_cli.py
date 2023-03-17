@@ -5,8 +5,8 @@ class CliInputPrompt():
     NOTE_PROMPT = ("note_title", "note_body")
 
     USER_MESSAGES = {
-        NOTE_PROMPT[0]: "Введите заголовок заметки: ",
-        NOTE_PROMPT[1]: "Введите содержание заметки: ",
+        NOTE_PROMPT[0]: "Введите заголовок заметки в формате год/месяц/день: ",
+        NOTE_PROMPT[1]: "Введите содержание заметки в формате год/месяц/день: ",
 
     }
     
@@ -75,5 +75,5 @@ class CliInputPrompt():
     
     # Перевод строки в datetime
     def _formatStringToDateTime(self, user_date_time):
-        date_time_from_string = time.strptime(user_date_time, "%Y%m%d")
+        date_time_from_string = time.strptime(user_date_time, "%Y/%m/%d")
         return date_time_from_string
