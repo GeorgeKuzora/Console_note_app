@@ -1,3 +1,5 @@
+import time
+
 class CliInputPrompt():
 
     NOTE_PROMPT = ("note_title", "note_body")
@@ -5,7 +7,17 @@ class CliInputPrompt():
     USER_MESSAGES = {
         NOTE_PROMPT[0]: "Введите заголовок заметки: ",
         NOTE_PROMPT[1]: "Введите содержание заметки: ",
+
     }
+    
+    DATE_SEARCH = ("start_date", "stop_date")
+
+    USER_MESSAGES_DATE = {
+        DATE_SEARCH[0]: "Введите начальную дату в формате год/месяц/день: ",
+        DATE_SEARCH[1]: "Введите конечную дату в формате год/месяц/день: ",
+
+    }
+
     INIT_MSG_CONTENT = [
         "Какое действие вы хотите совершить?",
         "1. Создать новую заметку",
@@ -52,3 +64,17 @@ class CliInputPrompt():
     def promptUserForString(cls, message):
         user_string = input(message)
         return user_string
+    
+    # Диалог запроса даты поиска 
+    @classmethod
+    def getUserDateForSearch(cls):
+        date_input_stream = {}
+        for i in cls.DATE_SEARCH:
+           date_input_stream[i] = cls.promptUserForString(cls.USER_MESSAGES_DATE[i])
+        return date_input_stream
+    
+    # Перевод строки в datetime
+    @staticmethod
+    def _formatStringToDateTime(user_date_time):
+        date_time_from_string = time.strptime(user_date_time, "%Y/%m/%d")
+        return date_time_from_string
