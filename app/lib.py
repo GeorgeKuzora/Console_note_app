@@ -40,6 +40,12 @@ class Note:
         # note_data = json.loads(json_stream)
         for key in note_data:
             setattr(note, key, note_data[key])
+        note.note_creation_dt = datetime.strptime(
+            note.note_creation_dt, cls.NOTE_DT_FORMAT
+        )
+        note.note_last_modification_dt = datetime.strptime(
+            note.note_last_modification_dt, cls.NOTE_DT_FORMAT
+        )
         return note
 
     def changeNote(self, input_stream):
@@ -73,5 +79,5 @@ class Note:
         return note_as_dict
 
     def _formatDateTimeToString(self, _note_date_time):
-        _note_date_time_string = _note_date_time.strftime(self.NOTE_DT_FORMAT)
+        _note_date_time_string = datetime.strftime(_note_date_time, self.NOTE_DT_FORMAT)
         return _note_date_time_string
