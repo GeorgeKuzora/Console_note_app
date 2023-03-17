@@ -5,16 +5,16 @@ class CliInputPrompt():
     NOTE_PROMPT = ("note_title", "note_body")
 
     USER_MESSAGES = {
-        NOTE_PROMPT[0]: "Введите заголовок заметки в формате год/месяц/день: ",
-        NOTE_PROMPT[1]: "Введите содержание заметки в формате год/месяц/день: ",
+        NOTE_PROMPT[0]: "Введите заголовок заметки: ",
+        NOTE_PROMPT[1]: "Введите содержание заметки: ",
 
     }
     
     DATE_SEARCH = ("start_date", "stop_date")
 
     USER_MESSAGES_DATE = {
-        DATE_SEARCH[0]: "Введите начальную дату: ",
-        DATE_SEARCH[1]: "Введите конечную дату: ",
+        DATE_SEARCH[0]: "Введите начальную дату в формате год/месяц/день: ",
+        DATE_SEARCH[1]: "Введите конечную дату в формате год/месяц/день: ",
 
     }
 
