@@ -74,6 +74,7 @@ class CliInputPrompt():
         return date_input_stream
     
     # Перевод строки в datetime
-    def _formatStringToDateTime(self, user_date_time):
+    @staticmethod
+    def _formatStringToDateTime(user_date_time):
         date_time_from_string = time.strptime(user_date_time, "%Y/%m/%d")
         return date_time_from_string
