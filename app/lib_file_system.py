@@ -1,103 +1,44 @@
 import os
-import glob
+from glob import glob
 import json
 
 
 class FileSystemHandler:
     STORAGE_DIR = "data"
     FILE_FORMAT = ".json"
-
-    def __init__(self):
-        pass
+    FILE_NOT_EXISTS_MESSAGE = "File didn't exist"
 
     @classmethod
-    def saveNote(cls, write_data):
-        file_name = FileSystemHandler.getFileName(write_data[1])
+    def saveToFile(cls, file_name: str, file_content: dict) -> None:
+        file_name = cls.formatFileName(file_name)
         try:
             os.mkdir(cls.STORAGE_DIR)
         except FileExistsError:
             pass
         finally:
             with open(file_name, "w", encoding="utf-8") as file:
-                file.write(write_data[0])
+                json.dump(file_content, file)
 
     @classmethod
-    def delNote(cls, note_id):
-        file_name = cls.getFileName(note_id)
-        if os.path.isfile(file_name):
+    def deleteFile(cls, file_name):
+        file_name = cls.formatFileName(file_name)
+        try:
             os.remove(file_name)
-        else:
-            FileSystemReader.FILE_NOT_EXISTS_MESSAGE
+        except:
+            print(cls.FILE_NOT_EXISTS_MESSAGE)
 
     @classmethod
-    def getFileName(cls, note_id: str):
-        file_name = cls.STORAGE_DIR + "/" + note_id + cls.FILE_FORMAT
+    def formatFileName(cls, file_name: str) -> str:
+        file_name = (
+            os.getcwd() + "/" + cls.STORAGE_DIR + "/" + file_name + cls.FILE_FORMAT
+        )
         return file_name
 
-    # Записывает в словарь файлы формата json из текущего каталога
     @classmethod
-    def createListNote(cls):
-        list_note = []
-        print(os.getcwd())
-        for file in glob.glob(os.getcwd() + "/**/*.json"):
-            list_note.append(os.path.basename(file).split(".")[0])
-        return list_note
-
-    # Создает словарь из времени создания и имени файла, сортирует и записывает в новый список
-    @classmethod
-    def createListNoteWithDate(cls):
-        list_note = cls.createListNote()
-        list_note_date = {}
-        for i in range(0, len(list_note)):
-            list_note_date.update(
-                {
-                    list_note[i]: os.path.getmtime(
-                        os.getcwd() + "\\" + list_note[i] + ".json"
-                    )
-                }
-            )
-
-        sorted_values = sorted(list_note_date.values())
-        sort_list_note = {}
-        for i in sorted_values:
-            for k in list_note_date.keys():
-                if list_note_date[k] == i:
-                    sort_list_note[k] = list_note_date[k]
-                    break
-
-        return sort_list_note
-
-
-class FileSystemReader(FileSystemHandler):
-    FILE_NOT_EXISTS_MESSAGE = "Note didn't exist"
-
-    def __init__(self, id):
-        self.file_id = id
-        self.file_name = ""
-
-    @classmethod
-    def getJsonById(cls, file_id):
-        file = cls.getFileFactory(file_id)
-        json_data = file.readFile()
-        return json_data
-
-    @classmethod
-    def getFileFactory(cls, file_id):
-        file_obj = cls(file_id)
-        file_obj.file_name = file_obj.getFileName(file_obj.file_id)
-        return file_obj
-
-    def readFile(self):
-        try:
-            return self.getFileContents()
-        except FileNotFoundError:
-            return self.FILE_NOT_EXISTS_MESSAGE
-
-    def getFileContents(self):
-        with open(self.file_name, "r") as file:
-            file_contents = json.load(file)
-        return file_contents
-
-    @classmethod
-    def getJsonByNoteTitle(cls, note_title: str):
-        pass
+    def getContentsList(cls) -> list:
+        contents_list = []
+        for file_name in glob(os.getcwd() + "/**/*.json"):
+            with open(file_name, "r") as file:
+                file_contents = json.loads(file.read())
+                contents_list.append(file_contents)
+        return contents_list

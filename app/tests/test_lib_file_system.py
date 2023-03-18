@@ -1,76 +1,66 @@
 import unittest
 import os
 import json
-from lib_file_system import *
-from lib import *
+from lib_file_system import FileSystemHandler as fsh
 
 
 class TestFileSystemHandler(unittest.TestCase):
+    mock_file_content = {
+        "note_title": "test title",
+        "note_body": "test body",
+        "note_id": "20230313194644",
+        "note_creation_dt": "20230313194644353411",
+        "note_last_modification_dt": "20230313194644353430",
+    }
+
     def setUp(self):
-        self.test_id = "20230101010101"
-        self.test_file_content = """{"note_title": "test title",
-                                     "note_body": "test body",
-                                     "note_id": "20230313194644",
-                                     "note_creation_dt": "20230313194644353411",
-                                     "note_last_modification_dt": "20230313194644353430"}"""
-        self.test_dict = json.loads(self.test_file_content)
-        self.file_name = "data/20230101010101.json"
-        self.test_write_data = (self.test_file_content, self.test_id)
+        self.mock_file_name = "20230313194644"
+        self.mock_file_content = self.mock_file_content
 
-    def testSaveNote(self):
-        FileSystemHandler.saveNote(self.test_write_data)
-        self.assertTrue(os.access(self.file_name, os.F_OK))
-        with open(self.file_name, "r") as file:
-            fileContents = file.read()
-        self.assertEqual(fileContents, self.test_file_content)
+        self.test_file_name = "data/20230313194644.json"
+        self.test_write_data = (self.mock_file_content, self.mock_file_name)
 
-    def testCreateListNote(self):
-        file_list = FileSystemHandler.createListNote()
-        file_list_values = file_list.values()
-        self.assertEqual(type(file_list), type({"thisis": "dict"}))
-        self.assertTrue(len(file_list_values) != 0)
+    def testFormatFileName(self):
+        formated_file_name = fsh.formatFileName(self.mock_file_name)
+        self.assertEqual(formated_file_name[-20:], self.test_file_name[-20:])
+
+    def testSaveToFile(self):
+        fsh.saveToFile(self.mock_file_name, self.mock_file_content)
+        self.assertTrue(os.access(self.test_file_name, os.F_OK))
+        with open(self.test_file_name, "r") as file:
+            file_contents = json.load(file)
+        self.assertEqual(file_contents, self.mock_file_content)
+        MockFileController.deleteFile(self.mock_file_name)
+
+    def testDeleteFile(self):
+        MockFileController.createFile(self.mock_file_name)
+        fsh.deleteFile(self.mock_file_name)
+        self.assertFalse(os.access(self.test_file_name, os.F_OK))
+
+    def testGetContentsList(self):
+        files = ("testfile1", "testfile2", "testfile3")
+        for file in files:
+            MockFileController.createFile(file)
+        contents_list = fsh.getContentsList()
+        self.assertEqual(len(contents_list), 3)
+        for file in files:
+            MockFileController.deleteFile(file)
 
 
-class TestFileSystemReader(unittest.TestCase):
-    def setUp(self):
-        self.test_id = "20230101010102"
-        self.test_file_content = """{"note_title": "test title",
-                                     "note_body": "test body",
-                                     "note_id": "20230313194644",
-                                     "note_creation_dt": "20230313194644353411",
-                                     "note_last_modification_dt": "20230313194644353430"}"""
-        self.test_dict = json.loads(self.test_file_content)
-        self.test_file_name = "data/20230101010102.json"
-        self.test_file_obj = FileSystemReader(self.test_id)
-        self.test_file_obj.file_name = self.test_file_name
-        self.test_corupted_id = "323424"
-        self.test_corupted_file_name = "data/323424.json"
-        self.test_corupted_file = FileSystemReader(self.test_corupted_id)
-        self.test_corupted_file.file_name = self.test_corupted_file_name
-        with open(self.test_file_name, "w") as file:
-            file.write(self.test_file_content)
+class MockFileController:
+    @staticmethod
+    def createFile(file_name: str) -> None:
+        file_name = "data" + "/" + file_name + ".json"
+        try:
+            os.mkdir("data")
+        except FileExistsError:
+            pass
+        finally:
+            with open(file_name, "w", encoding="utf-8") as file:
+                # file.write('{"test key": "test value",}')
+                json.dump(TestFileSystemHandler.mock_file_content, file)
 
-    def testGetJsonById(self):
-        file_data = FileSystemReader.getJsonById(self.test_id)
-        self.assertEqual(file_data, self.test_file_content)
-
-    def testGetFileFactory(self):
-        file_obj = FileSystemReader.getFileFactory(self.test_id)
-        self.assertEqual(type(file_obj), type(FileSystemReader(self.test_id)))
-        self.assertEqual(file_obj.file_name, self.test_file_name)
-
-    def testReadFile(self):
-        file_data = self.test_file_obj.readFile()
-        self.assertEqual(file_data, self.test_file_content)
-
-    def testReadFileNotRead(self):
-        file_data = self.test_corupted_file.readFile()
-        self.assertEqual(file_data, self.test_corupted_file.FILE_NOT_EXISTS_MESSAGE)
-
-    def testGetFileContents(self):
-        file_data = self.test_file_obj.getFileContents()
-        self.assertEqual(file_data, self.test_file_content)
-
-    def testGetJsonByNoteTitle(self):
-        file_data = FileSystemReader.getJsonByNoteTitle(self.test_dict["note_title"])
-        self.assertEqual(type(file_data), type("string"))
+    @staticmethod
+    def deleteFile(file_name: str) -> None:
+        file_name = "data" + "/" + file_name + ".json"
+        os.remove(file_name)
