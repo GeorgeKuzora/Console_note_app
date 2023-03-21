@@ -19,6 +19,7 @@ class Note:
     def setTitleBody(self, title: str, body: str) -> None:
         self.note_title = title
         self.note_body = body
+        self.note_last_modification_dt = datetime.now()
 
     def setStorageData(self, storage_data: dict) -> None:
         for key in storage_data:
@@ -50,3 +51,40 @@ class Note:
     def _formatDateTimeToString(self, _note_date_time: datetime) -> str:
         _note_date_time_string = datetime.strftime(_note_date_time, self.NOTE_DT_FORMAT)
         return _note_date_time_string
+
+
+class NoteList:
+    INIT_START_DATE = datetime(1900, 1, 1, 0, 0, 0, 0)
+    INIT_END_DATE = datetime(9999, 1, 1, 0, 0, 0, 0)
+
+    def __init__(self) -> None:
+        self.note_list = []
+        self.start_date = self.INIT_START_DATE
+        self.end_date = self.INIT_END_DATE
+
+    def setListData(self, list_data: list) -> None:
+        for ld in list_data:
+            note = Note()
+            note.setStorageData(ld)
+            self.note_list.append(note)
+
+    def getListData(self) -> list:
+        list_data = []
+        for n in self.note_list:
+            if (
+                n.note_creation_dt >= self.start_date
+                and n.note_creation_dt <= self.end_date
+            ):
+                list_data.append(n.getNoteData())
+        return list_data
+
+    def setDates(self, start_date: datetime, end_date: datetime) -> None:
+        self.start_date = start_date
+        self.end_date = end_date
+
+    def getNotesByTitle(self, title: str) -> list:
+        list_data = []
+        for n in self.note_list:
+            if title in n.note_title:
+                list_data.append(n.getNoteData())
+        return list_data
