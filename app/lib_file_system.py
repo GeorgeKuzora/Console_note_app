@@ -1,5 +1,6 @@
 import os
 from glob import glob
+import glob
 
 
 
@@ -40,7 +41,7 @@ class FileSystemHandler:
     def createListNote(cls):
         list_note_dict = {}
         i = 0   
-        for file in glob("*.json"):
+        for file in glob.glob(os.getcwd()+ "/data" + '**/*.json'):
             list_note_dict.update({i: os.path.basename(file).split(".")[0]})
             i += 1
         return list_note_dict
@@ -48,10 +49,10 @@ class FileSystemHandler:
     # Создает словарь из времени создания и имени файла, сортирует и записывает в новый список
     @classmethod
     def createListNoteWithDate(cls):
-        list_note = createListNote()
+        list_note = cls.createListNote()
         list_note_date = {}
         for i in range(0, len(list_note)):
-            list_note_date.update({list_note[i]: os.path.getmtime(os.getcwd() + "\\" + list_note[i] + ".json")})
+            list_note_date.update({list_note[i]: os.path.getmtime(os.getcwd() + "/data/" +  list_note[i] + ".json")})
        
         sorted_values = sorted(list_note_date.values())
         sort_list_note = {}
