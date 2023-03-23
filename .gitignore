@@ -131,6 +131,7 @@ dmypy.json
 # files
 app/data/
 design/
+*.json
 
 # MacOS specific files
 .DS_Store

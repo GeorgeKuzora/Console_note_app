@@ -1,4 +1,5 @@
 from datetime import datetime
+from lib import Note
 
 
 class UserInput:
@@ -64,30 +65,32 @@ class ConsolePrinter:
             print("---")
 
     @classmethod
-    def printNote(cls, note: dict[str, datetime]) -> None:
+    def printNote(cls, note: dict[str]) -> None:
         print(note["note_title"])
         print()
         print(note["note_body"])
         print()
+        print(f"Заметка создана: {cls.formatDatetime(note['note_creation_dt'])}")
         print(
-            f"Заметка создана: {cls.convertDatetimeToString(note['note_creation_dt'])}"
-        )
-        print(
-            f"Заметка отредактирована: {cls.convertDatetimeToString(note['note_last_modification_dt'])}"
+            f"Заметка отредактирована: {cls.formatDatetime(note['note_last_modification_dt'])}"
         )
 
     @classmethod
-    def convertDatetimeToString(cls, date: datetime) -> str:
-        date_str = date.strftime(cls.DATETIME_FORMAT)
-        return date_str
+    def formatDatetime(cls, date_str: str) -> str:
+        date = datetime.strptime(date_str, Note.NOTE_DT_FORMAT)
+        date = date.strftime(cls.DATETIME_FORMAT)
+        return date
 
     @classmethod
     def printHelp(cls):
         print(
-            "Доступные команды:" "add - Создать новую заметку",
-            "all - Посмотреть список заметок по названииям",
-            "show - Вывести текст заметки на экран введя заголовок заметки",
-            "change - Изменить заметку введя заголовок заметки",
-            "delete - Удалить заметку",
-            "date - Посмотреть заметки в интервале дат создания",
+            """
+Доступные команды:
+    add - Создать новую заметку
+    all - Посмотреть все заметки
+    show - Вывести текст заметки на экран введя заголовок заметки
+    change - Изменить заметку введя заголовок заметки
+    delete - Удалить заметку
+    date - Посмотреть заметки в интервале дат создания
+"""
         )
