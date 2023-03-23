@@ -1,44 +1,40 @@
-import os
-import json
 from datetime import datetime
 
 
-class CliInputPrompt:
-    NOTE_PROMPT = ("note_title", "note_body")
-
+class UserInput:
     USER_MESSAGES = {
-        NOTE_PROMPT[0]: "Введите заголовок заметки: ",
-        NOTE_PROMPT[1]: "Введите содержание заметки: ",
+        "title": "Введите заголовок заметки: ",
+        "body": "Введите текст заметки: ",
+        "start": "Введите начальную дату: ",
+        "end": "Введите конечную дату: ",
     }
+    DATETIME_FORMAT = "%Y-%m-%d"
 
-    DATE_SEARCH = ("start_date", "stop_date")
+    def __init__(self) -> None:
+        self.note_title = ""
+        self.note_body = ""
+        self.start_date = datetime(1900, 1, 1, 0, 0, 0, 0)
+        self.end_date = datetime(9999, 1, 1, 0, 0, 0, 0)
 
-    USER_MESSAGES_DATE = {
-        DATE_SEARCH[0]: "Введите начальную дату в формате год/месяц/день: ",
-        DATE_SEARCH[1]: "Введите конечную дату в формате год/месяц/день: ",
-    }
+    def setUserInput(self, message: str = "") -> str:
+        user_str = input(message)
+        return user_str
 
-    INIT_MSG_CONTENT = [
-        "Какое действие вы хотите совершить?",
-        "1. Создать новую заметку",
-        "2. Посмотреть список заметок по названииям",
-        "3. Вывести текст заметки на экран",
-        "4. Изменить заметку",
-        "5. Удалить заметку",
-        "6. Посмотреть заметки в интервале дат создания",
-    ]
+    def setTitle(self) -> None:
+        self.note_title = self.setUserInput(self.USER_MESSAGES["title"])
 
-    USER_CHOICE_MSG = (
-        "Введите номер действия: ",
-        "Введен неправильный номер. Попробуйте еще раз.",
-    )
+    def setBody(self) -> None:
+        self.note_body = self.setUserInput(self.USER_MESSAGES["body"])
 
-    # не знаю, нужен ли здесь этот метод, обсудим
-    @classmethod
-    def initialActions(cls):
-        cls.initialMessage()
-        action = cls.userChoice()
-        return action
+    def setDates(self) -> None:
+        start = self.setUserInput(self.USER_MESSAGES["start"])
+        end = self.setUserInput(self.USER_MESSAGES["end"])
+        self.start_date = self.convertToDatetime(start)
+        self.end_date = self.convertToDatetime(end)
+
+    def convertToDatetime(self, str_date: str) -> datetime:
+        date = datetime.strptime(str_date, self.DATETIME_FORMAT)
+        return date
 
     # Выводит в консоль вопрос к пользователю, что он хочет
     @classmethod
