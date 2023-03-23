@@ -45,3 +45,7 @@ class TestUserInput(unittest.TestCase):
         user_input.setDates()
         self.assertEqual(user_input.start_date, self.test_date)
         self.assertEqual(user_input.end_date, self.test_date)
+
+
+class TestConsolePrinter(unittest.TestCase):
+    pass
