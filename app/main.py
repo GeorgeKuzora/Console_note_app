@@ -1,89 +1,108 @@
-from lib import Note
-from lib_cli import CliInputPrompt, PrintBodyOfTheChosenNote, ListOfNoteTitles
-from lib_file_system import FileSystemHandler, FileSystemReader
+from lib import Note, NoteList
+from lib_cli import UserInput, ConsolePrinter
+from lib_file_system import FileSystemHandler
 
 
-def createNoteFromCliInput():
-    cli_input_stream = CliInputPrompt.getCliInputStream()
-    note_obj = Note.createNote(cli_input_stream)
-    file_system_stream = note_obj.getFileSystemStream()
-    FileSystemHandler.saveNote(file_system_stream)
+class Controller:
+    def __init__(self) -> None:
+        pass
+
+    def createNote(self) -> None:
+        ConsolePrinter.printNewNoteMessage()
+        user_input = UserInput()
+        user_input.setTitle()
+        user_input.setBody()
+        note = Note()
+        note.setTitleBody(user_input.note_title, user_input.note_body)
+        file_name = note.getNoteId()
+        file_data = note.getNoteData()
+        FileSystemHandler.saveToFile(file_name, file_data)
+
+    def getListOfNotes(self):
+        files_content = FileSystemHandler.getContentsList()
+        note_list = NoteList()
+        note_list.setListData(files_content)
+        notes_data = note_list.getListData()
+        ConsolePrinter.printListOfNotes(notes_data)
+
+    def getListOfNotesByDate(self):
+        ConsolePrinter.printDatesInputMessage()
+        user_input = UserInput()
+        user_input.setDates()
+        files_content = FileSystemHandler.getContentsList()
+        note_list = NoteList()
+        note_list.setListData(files_content)
+        note_list.setDates(user_input.start_date, user_input.end_date)
+        notes_data = note_list.getListData()
+        ConsolePrinter.printListOfNotes(notes_data)
+
+    def getListNotesByName(self):
+        user_input = UserInput()
+        user_input.setTitle()
+        files_content = FileSystemHandler.getContentsList()
+        note_list = NoteList()
+        note_list.setListData(files_content)
+        notes_data = note_list.getNotesByTitle(user_input.note_title)
+        ConsolePrinter.printListOfNotes(notes_data)
+
+    def changeNote(self):
+        orig_title_input = UserInput()
+        orig_title_input.setTitle()
+        files_content = FileSystemHandler.getContentsList()
+        note_list = NoteList()
+        note_list.setListData(files_content)
+        notes_data = note_list.getNotesByTitle(orig_title_input.note_title)
+        ConsolePrinter.printChangeNoteMessage()
+        user_input = UserInput()
+        user_input.setTitle()
+        user_input.setBody()
+        for nd in notes_data:
+            note = Note()
+            note.setStorageData(nd)
+            note.setTitleBody(user_input.note_title, user_input.note_body)
+            file_name = note.getNoteId()
+            file_data = note.getNoteData()
+            FileSystemHandler.saveToFile(file_name, file_data)
+
+    def deleteNote(self):
+        orig_title_input = UserInput()
+        orig_title_input.setTitle()
+        files_content = FileSystemHandler.getContentsList()
+        note_list = NoteList()
+        note_list.setListData(files_content)
+        notes_data = note_list.getNotesByTitle(orig_title_input.note_title)
+        for nd in notes_data:
+            note = Note()
+            note.setStorageData(nd)
+            file_name = note.getNoteId()
+            FileSystemHandler.deleteFile(file_name)
+        ConsolePrinter.printDeleteMessage()
 
 
-def getNoteByName():
-    PrintBodyOfTheChosenNote()
+class Program:
+    def __init__(self) -> None:
+        pass
 
+    def getCommandFromStartMenu(self) -> str:
+        ConsolePrinter.printHelp()
+        command = input("Введите желаемую комманду: ")
+        print()
+        return command
 
-def getListOfNotes():
-    ListOfNoteTitles()
-
-
-def getListOfNotesByDates():
-    all_notes_names = FileSystemHandler.createListNote()
-    all_notes = []
-    for name in all_notes_names:
-        note_json = FileSystemReader.getJsonById(name)
-        all_notes.append(Note.createNoteFromJson(note_data=note_json))
-    start_end_date = CliInputPrompt.getUserDateForSearch()
-    note_list = []
-    for note in all_notes:
-        if (
-            note.note_creation_dt >= start_end_date[0]
-            and note.note_creation_dt <= start_end_date[1]
-        ):
-            note_list.append(note)
-            print(note.note_title, end="\n\n")
-
-
-def changeNote():
-    all_notes_names = FileSystemHandler.createListNote()
-    data_from_all_notes = []
-    for name in all_notes_names:
-        data_from_all_notes.append(FileSystemReader.getJsonById(name))
-    note_title = CliInputPrompt.promptUserForString(
-        CliInputPrompt.USER_MESSAGES[CliInputPrompt.NOTE_PROMPT[0]]
-    )
-    note = None
-    for data in data_from_all_notes:
-        if data["note_title"] == note_title:
-            note = Note.createNoteFromJson(data)
-            break
-    if note != None:
-        input_stream = CliInputPrompt.getCliInputStream()
-        note.changeNote(input_stream)
-        file_stream = note.getFileSystemStream()
-        FileSystemHandler.saveNote(file_stream)
-
-
-def deleteNote():
-    all_notes_names = FileSystemHandler.createListNote()
-    data_from_all_notes = []
-    for name in all_notes_names:
-        data_from_all_notes.append(FileSystemReader.getJsonById(name))
-    note_title = CliInputPrompt.promptUserForString(
-        CliInputPrompt.USER_MESSAGES[CliInputPrompt.NOTE_PROMPT[0]]
-    )
-    note = None
-    for data in data_from_all_notes:
-        if data["note_title"] == note_title:
-            note = Note.createNoteFromJson(data)
-            break
-    if note != None:
-        FileSystemHandler.delNote(note_id=note.note_id)
-
-
-def actionChooser(num_of_action):
-    fuction_loader = [
-        createNoteFromCliInput,
-        getListOfNotes,
-        getNoteByName,
-        changeNote,
-        deleteNote,
-        getListOfNotesByDates,
-    ]
-    return fuction_loader[num_of_action - 1]
+    def runController(self):
+        control = Controller()
+        dict_of_methods = {
+            "add": control.createNote,
+            "all": control.getListOfNotes,
+            "show": control.getListNotesByName,
+            "change": control.changeNote,
+            "delete": control.deleteNote,
+            "date": control.getListOfNotesByDate,
+        }
+        command = self.getCommandFromStartMenu()
+        dict_of_methods[command]()
 
 
 if __name__ == "__main__":
-    num_of_func = CliInputPrompt.initialActions()
-    actionChooser(num_of_func)()
+    program = Program()
+    program.runController()

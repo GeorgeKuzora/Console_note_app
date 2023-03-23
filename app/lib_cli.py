@@ -1,115 +1,96 @@
-import os
-import json
 from datetime import datetime
+from lib import Note
 
 
-class CliInputPrompt:
-    NOTE_PROMPT = ("note_title", "note_body")
-
+class UserInput:
     USER_MESSAGES = {
-        NOTE_PROMPT[0]: "Введите заголовок заметки: ",
-        NOTE_PROMPT[1]: "Введите содержание заметки: ",
+        "title": "Введите заголовок заметки: ",
+        "body": "Введите текст заметки: ",
+        "start": "Введите начальную дату: ",
+        "end": "Введите конечную дату: ",
     }
+    DATETIME_FORMAT = "%Y-%m-%d"
 
-    DATE_SEARCH = ("start_date", "stop_date")
+    def __init__(self) -> None:
+        self.note_title = ""
+        self.note_body = ""
+        self.start_date = datetime(1900, 1, 1, 0, 0, 0, 0)
+        self.end_date = datetime(9999, 1, 1, 0, 0, 0, 0)
 
-    USER_MESSAGES_DATE = {
-        DATE_SEARCH[0]: "Введите начальную дату в формате год/месяц/день: ",
-        DATE_SEARCH[1]: "Введите конечную дату в формате год/месяц/день: ",
-    }
+    def setUserInput(self, message: str = "") -> str:
+        user_str = input(message)
+        return user_str
 
-    INIT_MSG_CONTENT = [
-        "Какое действие вы хотите совершить?",
-        "1. Создать новую заметку",
-        "2. Посмотреть список заметок по названииям",
-        "3. Вывести текст заметки на экран",
-        "4. Изменить заметку",
-        "5. Удалить заметку",
-        "6. Посмотреть заметки в интервале дат создания",
-    ]
+    def setTitle(self) -> None:
+        self.note_title = self.setUserInput(self.USER_MESSAGES["title"])
 
-    USER_CHOICE_MSG = (
-        "Введите номер действия: ",
-        "Введен неправильный номер. Попробуйте еще раз.",
-    )
+    def setBody(self) -> None:
+        self.note_body = self.setUserInput(self.USER_MESSAGES["body"])
 
-    # не знаю, нужен ли здесь этот метод, обсудим
-    @classmethod
-    def initialActions(cls):
-        cls.initialMessage()
-        action = cls.userChoice()
-        return action
+    def setDates(self) -> None:
+        start = self.setUserInput(self.USER_MESSAGES["start"])
+        end = self.setUserInput(self.USER_MESSAGES["end"])
+        self.start_date = self.convertToDatetime(start)
+        self.end_date = self.convertToDatetime(end)
 
-    # Выводит в консоль вопрос к пользователю, что он хочет
-    @classmethod
-    def initialMessage(cls):
-        print("\n".join(cls.INIT_MSG_CONTENT))
+    def convertToDatetime(self, str_date: str) -> datetime:
+        date = datetime.strptime(str_date, self.DATETIME_FORMAT)
+        return date
 
-    # Вызывает метод, соответствующий выбору пользователя.
-    # Поскольку методы еще не допилены, не функционирует.
-    # Можно проверить, заменив UserChoiceResult на список из 6 элементов.
-    @classmethod
-    def userChoice(cls):
-        user_response_int = int(cls.promptUserForString(cls.USER_CHOICE_MSG[0]))
-        if user_response_int <= 0 or user_response_int >= len(cls.INIT_MSG_CONTENT):
-            print(cls.USER_CHOICE_MSG[1])
-            cls.userChoice()
-        else:
-            return user_response_int
 
-    # UserChoiceResult - метод создания списка, где будут храниться функции
-    # для исполнения желаний пользователя
+class ConsolePrinter:
+    DATETIME_FORMAT = "%Y-%m-%d"
 
     @classmethod
-    def UserChoiceResult(cls):
-        return []
+    def printNewNoteMessage(cls) -> None:
+        print("Ввод заголовка и текста новой заметки")
 
     @classmethod
-    def getCliInputStream(cls):
-        cli_input_stream = {}
-        for np in cls.NOTE_PROMPT:
-            cli_input_stream[np] = cls.promptUserForString(cls.USER_MESSAGES[np])
-        return cli_input_stream
+    def printChangeNoteMessage(cls) -> None:
+        print("Ввод заголовка и текста редактируемой заметки")
 
     @classmethod
-    def promptUserForString(cls, message):
-        user_string = input(message)
-        return user_string
+    def printDatesInputMessage(cls) -> None:
+        print("Ввод начальной и конечной даты в формате год-месяц-день")
 
-    # Диалог запроса даты поиска
     @classmethod
-    def getUserDateForSearch(cls):
-        date_input_stream = []
-        for i in cls.DATE_SEARCH:
-            date_input_stream.append(
-                cls._formatStringToDateTime(
-                    cls.promptUserForString(cls.USER_MESSAGES_DATE[i])
-                )
-            )
-        return date_input_stream
+    def printDeleteMessage(cls):
+        print("Заметки были удалены")
 
-    # Перевод строки в datetime
     @classmethod
-    def _formatStringToDateTime(cls, user_date_time):
-        date_time_from_string = datetime.strptime(user_date_time, "%Y/%m/%d")
-        return date_time_from_string
+    def printListOfNotes(cls, ListOfNotes: list[dict]) -> None:
+        print("---")
+        for n in ListOfNotes:
+            cls.printNote(n)
+            print("---")
 
+    @classmethod
+    def printNote(cls, note: dict[str]) -> None:
+        print(note["note_title"])
+        print()
+        print(note["note_body"])
+        print()
+        print(f"Заметка создана: {cls.formatDatetime(note['note_creation_dt'])}")
+        print(
+            f"Заметка отредактирована: {cls.formatDatetime(note['note_last_modification_dt'])}"
+        )
 
-def ListOfNoteTitles():
-    directory = os.getcwd() + "/data"
-    for file in os.listdir(directory):
-        with open(f"{directory}/{file}", "r") as current_file:
-            file_content = json.loads(current_file.read())
-            print(file_content["note_title"])
+    @classmethod
+    def formatDatetime(cls, date_str: str) -> str:
+        date = datetime.strptime(date_str, Note.NOTE_DT_FORMAT)
+        date = date.strftime(cls.DATETIME_FORMAT)
+        return date
 
-
-def PrintBodyOfTheChosenNote():
-    directory = os.getcwd() + "/data"
-    title_from_user = input("Введите название заметки: ")
-    for file in os.listdir(directory):
-        with open(f"{directory}/{file}", "r") as current_file:
-            dict_from_content = json.loads(current_file.read())
-            if title_from_user == dict_from_content["note_title"]:
-                result = dict_from_content["note_body"]
-                print(f"Текст выбранной заметки: {result}")
-                break
+    @classmethod
+    def printHelp(cls):
+        print(
+            """
+Доступные команды:
+    add - Создать новую заметку
+    all - Посмотреть все заметки
+    show - Вывести текст заметки на экран введя заголовок заметки
+    change - Изменить заметку введя заголовок заметки
+    delete - Удалить заметку
+    date - Посмотреть заметки в интервале дат создания
+"""
+        )
