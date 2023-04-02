@@ -16,7 +16,7 @@ class Note:
         _note_id = self.note_creation_dt.strftime(self.NOTE_ID_FORMAT)
         return _note_id
 
-    def setTitleBody(self, title: str, body: str) -> None:
+    def set_title_body(self, title: str, body: str) -> None:
         self.note_title = title
         self.note_body = body
         self.note_last_modification_dt = datetime.now()

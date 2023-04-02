@@ -13,7 +13,7 @@ class Controller:
         user_input.setTitle()
         user_input.setBody()
         note = Note()
-        note.setTitleBody(user_input.note_title, user_input.note_body)
+        note.set_title_body(user_input.note_title, user_input.note_body)
         file_name = note.getNoteId()
         file_data = note.getNoteData()
         FileSystemHandler.saveToFile(file_name, file_data)
@@ -59,7 +59,7 @@ class Controller:
         for nd in notes_data:
             note = Note()
             note.setStorageData(nd)
-            note.setTitleBody(user_input.note_title, user_input.note_body)
+            note.set_title_body(user_input.note_title, user_input.note_body)
             file_name = note.getNoteId()
             file_data = note.getNoteData()
             FileSystemHandler.saveToFile(file_name, file_data)
