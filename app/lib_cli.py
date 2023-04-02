@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 import os
 import json
 from datetime import datetime
+=======
+import time
+
+class CliInputPrompt():
+>>>>>>> ae322d6d9d980a247a86d1a423148332938b5dbf
 
 
 class CliInputPrompt:
@@ -9,13 +15,22 @@ class CliInputPrompt:
     USER_MESSAGES = {
         NOTE_PROMPT[0]: "Введите заголовок заметки: ",
         NOTE_PROMPT[1]: "Введите содержание заметки: ",
-    }
 
+    }
+<<<<<<< HEAD
+
+=======
+    
+>>>>>>> ae322d6d9d980a247a86d1a423148332938b5dbf
     DATE_SEARCH = ("start_date", "stop_date")
 
     USER_MESSAGES_DATE = {
         DATE_SEARCH[0]: "Введите начальную дату в формате год/месяц/день: ",
         DATE_SEARCH[1]: "Введите конечную дату в формате год/месяц/день: ",
+<<<<<<< HEAD
+=======
+
+>>>>>>> ae322d6d9d980a247a86d1a423148332938b5dbf
     }
 
     INIT_MSG_CONTENT = [
@@ -75,6 +90,7 @@ class CliInputPrompt:
     def promptUserForString(cls, message):
         user_string = input(message)
         return user_string
+<<<<<<< HEAD
 
     # Диалог запроса даты поиска
     @classmethod
@@ -113,3 +129,19 @@ def PrintBodyOfTheChosenNote():
                 result = dict_from_content["note_body"]
                 print(f"Текст выбранной заметки: {result}")
                 break
+=======
+    
+    # Диалог запроса даты поиска 
+    @classmethod
+    def getUserDateForSearch(cls):
+        date_input_stream = {}
+        for i in cls.DATE_SEARCH:
+           date_input_stream[i] = cls.promptUserForString(cls.USER_MESSAGES_DATE[i])
+        return date_input_stream
+    
+    # Перевод строки в datetime
+    @staticmethod
+    def _formatStringToDateTime(user_date_time):
+        date_time_from_string = time.strptime(user_date_time, "%Y/%m/%d")
+        return date_time_from_string
+>>>>>>> ae322d6d9d980a247a86d1a423148332938b5dbf
