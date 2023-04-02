@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime
-from lib import Note, NoteList
+from src.lib import Note, NoteList
 
 
 class MockNote(Note):
@@ -48,7 +48,7 @@ class TestNote(unittest.TestCase):
     def testSetTitleBody(self) -> None:
         mock_note = MockNote()
         note_mod_date = mock_note.note_last_modification_dt
-        mock_note.setTitleBody(
+        mock_note.set_title_body(
             self.test_data["note_title"], self.test_data["note_body"]
         )
         self.assertEqual(mock_note.note_title, self.test_data["note_title"])
