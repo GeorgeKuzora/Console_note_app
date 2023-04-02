@@ -1,6 +1,7 @@
 import os
 from glob import glob
 import glob
+import json
 
 
 
@@ -23,22 +24,39 @@ class FileSystemHandler:
                 file.write(write_data[0])
 
     @classmethod
+<<<<<<< HEAD
+    def delNote(cls, note_id):
+=======
     def delNote(cls, note_id):   
+>>>>>>> ae322d6d9d980a247a86d1a423148332938b5dbf
         file_name = cls.getFileName(note_id)
         if os.path.isfile(file_name):
             os.remove(file_name)
         else:
             FileSystemReader.FILE_NOT_EXISTS_MESSAGE
 
+<<<<<<< HEAD
+    @classmethod
+    def getFileName(cls, note_id: str):
+=======
 
     @classmethod
     def getFileName(cls, note_id):
+>>>>>>> ae322d6d9d980a247a86d1a423148332938b5dbf
         file_name = cls.STORAGE_DIR + "/" + note_id + cls.FILE_FORMAT
         return file_name
 
     # Записывает в словарь файлы формата json из текущего каталога
     @classmethod
     def createListNote(cls):
+<<<<<<< HEAD
+        list_note = []
+        print(os.getcwd())
+        for file in glob.glob(os.getcwd() + "/**/*.json"):
+            list_note.append(os.path.basename(file).split(".")[0])
+        return list_note
+
+=======
         list_note_dict = {}
         i = 0   
         for file in glob.glob(os.getcwd()+ "/data" + '**/*.json'):
@@ -46,14 +64,26 @@ class FileSystemHandler:
             i += 1
         return list_note_dict
     
+>>>>>>> ae322d6d9d980a247a86d1a423148332938b5dbf
     # Создает словарь из времени создания и имени файла, сортирует и записывает в новый список
     @classmethod
     def createListNoteWithDate(cls):
         list_note = cls.createListNote()
         list_note_date = {}
         for i in range(0, len(list_note)):
+<<<<<<< HEAD
+            list_note_date.update(
+                {
+                    list_note[i]: os.path.getmtime(
+                        os.getcwd() + "\\" + list_note[i] + ".json"
+                    )
+                }
+            )
+
+=======
             list_note_date.update({list_note[i]: os.path.getmtime(os.getcwd() + "/data/" +  list_note[i] + ".json")})
        
+>>>>>>> ae322d6d9d980a247a86d1a423148332938b5dbf
         sorted_values = sorted(list_note_date.values())
         sort_list_note = {}
         for i in sorted_values:
@@ -63,8 +93,7 @@ class FileSystemHandler:
                     break
 
         return sort_list_note
-    
-   
+
 
 class FileSystemReader(FileSystemHandler):
     FILE_NOT_EXISTS_MESSAGE = "Note didn't exist"
@@ -93,7 +122,7 @@ class FileSystemReader(FileSystemHandler):
 
     def getFileContents(self):
         with open(self.file_name, "r") as file:
-            file_contents = file.read()
+            file_contents = json.load(file)
         return file_contents
 
     # Получение json из файла на основе title заметки
