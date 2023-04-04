@@ -37,6 +37,7 @@ class Controller:
         ConsolePrinter.printListOfNotes(notes_data)
 
     def getListNotesByName(self):
+        ConsolePrinter.printFindNotesMessage()
         user_input = UserInput()
         user_input.setTitle()
         files_content = FileSystemHandler.getContentsList()
@@ -46,6 +47,7 @@ class Controller:
         ConsolePrinter.printListOfNotes(notes_data)
 
     def changeNote(self):
+        ConsolePrinter.printFindOriginalNote()
         orig_title_input = UserInput()
         orig_title_input.setTitle()
         files_content = FileSystemHandler.getContentsList()
@@ -65,6 +67,7 @@ class Controller:
             FileSystemHandler.saveToFile(file_name, file_data)
 
     def deleteNote(self):
+        ConsolePrinter.printFindNoteForDeletion()
         orig_title_input = UserInput()
         orig_title_input.setTitle()
         files_content = FileSystemHandler.getContentsList()
