@@ -101,6 +101,13 @@ class Program:
         print()
         return command
 
+    def get_command_from_user(self):
+        try:
+            self.runController()
+        except KeyError:
+            print("Введена неверная комманда, попробуйте еще раз")
+            self.get_command_from_user()
+
     def runController(self):
         control = Controller()
         dict_of_methods = {
@@ -117,4 +124,4 @@ class Program:
 
 if __name__ == "__main__":
     program = Program()
-    program.runController()
+    program.get_command_from_user()
