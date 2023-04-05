@@ -1,6 +1,7 @@
 from lib import Note, NoteList
 from lib_cli import UserInput, ConsolePrinter
 from lib_file_system import FileSystemHandler
+from src.user_exeptions import InvalidUserInputError
 
 
 class Controller:
@@ -27,14 +28,22 @@ class Controller:
 
     def getListOfNotesByDate(self):
         ConsolePrinter.printDatesInputMessage()
-        user_input = UserInput()
-        user_input.setDates()
+        user_input = self.setDatesByUser()
         files_content = FileSystemHandler.getContentsList()
         note_list = NoteList()
         note_list.setListData(files_content)
         note_list.setDates(user_input.start_date, user_input.end_date)
         notes_data = note_list.getListData()
         ConsolePrinter.printListOfNotes(notes_data)
+
+    def setDatesByUser(self) -> UserInput:
+        try:
+            user_input: UserInput = UserInput()
+            user_input.setDates()
+            return user_input
+        except InvalidUserInputError as err:
+            print("Дата была введена в неправильном формате", err)
+            return self.setDatesByUser()
 
     def getListNotesByName(self):
         ConsolePrinter.printFindNotesMessage()

@@ -1,5 +1,6 @@
 from datetime import datetime
 from lib import Note
+from user_exeptions import InvalidUserInputError
 
 
 class UserInput:
@@ -26,6 +27,12 @@ class UserInput:
 
     def setBody(self) -> None:
         self.note_body = self.setUserInput(self.USER_MESSAGES["body"])
+
+    def setUserInputAsDates(self):
+        try:
+            self.setDates()
+        except ValueError:
+            raise InvalidUserInputError
 
     def setDates(self) -> None:
         start = self.setUserInput(self.USER_MESSAGES["start"])

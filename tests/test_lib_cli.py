@@ -1,12 +1,14 @@
 import unittest
 from unittest.mock import patch
-from lib_cli import UserInput, ConsolePrinter
+from src.lib_cli import UserInput, ConsolePrinter
 from datetime import datetime
+from user_exeptions import InvalidUserInputError
 
 
 class TestUserInput(unittest.TestCase):
     test_input = "test input"
     test_date_str = "2023-01-01"
+    invalid_test_date_str = "01-01-2023"
 
     def setUp(self) -> None:
         self.note_title = "test title"
@@ -33,18 +35,24 @@ class TestUserInput(unittest.TestCase):
         result = user_input.setUserInput()
         self.assertEqual(result, self.test_input)
 
-    @patch("lib_cli.UserInput.setUserInput", return_value=test_input)
+    @patch("src.lib_cli.UserInput.setUserInput", return_value=test_input)
     def testSetTitle(self, mock_input):
         user_input = UserInput()
         user_input.setTitle()
         self.assertEqual(user_input.note_title, self.test_input)
 
-    @patch("lib_cli.UserInput.setUserInput", return_value=test_date_str)
+    @patch("src.lib_cli.UserInput.setUserInput", return_value=test_date_str)
     def testSetDates(self, mock_input):
         user_input = UserInput()
-        user_input.setDates()
+        user_input.setUserInputAsDates()
         self.assertEqual(user_input.start_date, self.test_date)
         self.assertEqual(user_input.end_date, self.test_date)
+
+    @patch("src.lib_cli.UserInput.setUserInput", return_value=invalid_test_date_str)
+    def testSetDatesExeption(self, mock_input):
+        user_input = UserInput()
+        method = user_input.setUserInputAsDates
+        self.assertRaises(InvalidUserInputError, method)
 
 
 class TestConsolePrinter(unittest.TestCase):
