@@ -1,7 +1,7 @@
 import unittest
 import os
 import json
-from lib_file_system import FileSystemHandler as fsh
+from src.lib_file_system import FileSystemHandler as fsh
 
 
 class TestFileSystemHandler(unittest.TestCase):
