@@ -1,6 +1,7 @@
 from lib import Note, NoteList
 from lib_cli import UserInput, ConsolePrinter
 from lib_file_system import FileSystemHandler
+from src.user_exeptions import InvalidUserInputError
 
 
 class Controller:
@@ -27,8 +28,7 @@ class Controller:
 
     def getListOfNotesByDate(self):
         ConsolePrinter.printDatesInputMessage()
-        user_input = UserInput()
-        user_input.setDates()
+        user_input = self.setDatesByUser()
         files_content = FileSystemHandler.getContentsList()
         note_list = NoteList()
         note_list.setListData(files_content)
@@ -36,7 +36,17 @@ class Controller:
         notes_data = note_list.getListData()
         ConsolePrinter.printListOfNotes(notes_data)
 
+    def setDatesByUser(self) -> UserInput:
+        try:
+            user_input: UserInput = UserInput()
+            user_input.setDates()
+            return user_input
+        except InvalidUserInputError as err:
+            print("Дата была введена в неправильном формате", err)
+            return self.setDatesByUser()
+
     def getListNotesByName(self):
+        ConsolePrinter.printFindNotesMessage()
         user_input = UserInput()
         user_input.setTitle()
         files_content = FileSystemHandler.getContentsList()
@@ -46,6 +56,7 @@ class Controller:
         ConsolePrinter.printListOfNotes(notes_data)
 
     def changeNote(self):
+        ConsolePrinter.printFindOriginalNote()
         orig_title_input = UserInput()
         orig_title_input.setTitle()
         files_content = FileSystemHandler.getContentsList()
@@ -65,6 +76,7 @@ class Controller:
             FileSystemHandler.saveToFile(file_name, file_data)
 
     def deleteNote(self):
+        ConsolePrinter.printFindNoteForDeletion()
         orig_title_input = UserInput()
         orig_title_input.setTitle()
         files_content = FileSystemHandler.getContentsList()
@@ -89,6 +101,13 @@ class Program:
         print()
         return command
 
+    def get_command_from_user(self):
+        try:
+            self.runController()
+        except KeyError:
+            print("Введена неверная комманда, попробуйте еще раз")
+            self.get_command_from_user()
+
     def runController(self):
         control = Controller()
         dict_of_methods = {
@@ -105,4 +124,4 @@ class Program:
 
 if __name__ == "__main__":
     program = Program()
-    program.runController()
+    program.get_command_from_user()
